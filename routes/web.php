@@ -24,8 +24,12 @@ use Illuminate\Support\Facades\Route;
  * @created_at: 2021/10/01
  */
 
-Route::namespace('FrontEnd')->group(function () {
 
+Route::namespace('FrontEnd')->group(function () {
+  Route::get('/deploy', function () {
+    return view('deploy');
+  });
+  Route::post('/deploy', 'DeployController@deploy');
   Route::get('/sitemap.xml', 'SitemapXmlController@index')->name('frontend.sitemap');
 
   Route::get('/', 'HomeController@index')->name('frontend.home');
