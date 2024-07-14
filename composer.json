@@ -17,6 +17,7 @@
     "laravel/framework": "^7.29",
     "laravel/tinker": "^2.5",
     "maatwebsite/excel": "^3.1",
+    "phpseclib/phpseclib": "^3.0",
     "spatie/laravel-multitenancy": "^1.8",
     "unisharp/laravel-filemanager": "^2.2"
   },
