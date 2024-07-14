@@ -247,6 +247,13 @@
                         value="<?php echo e($detail->json_params->link_demo ?? old('json_params[link_demo]')); ?>" />
                     </div>
                   </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label><?php echo app('translator')->get('git_repo'); ?></label>
+                      <input name="json_params[git_repo]" class="form-control"
+                        value="<?php echo e($detail->json_params->git_repo ?? old('json_params[git_repo]')); ?>" />
+                    </div>
+                  </div>
                   <div class="col-md-12">
                     <hr style="border-top: dashed 2px #a94442; margin: 10px 0px;">
                   </div>

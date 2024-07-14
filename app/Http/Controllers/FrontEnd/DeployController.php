@@ -13,45 +13,12 @@ class DeployController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // public function deploy(Request $request)
-    // {
-    //     $subdomain = $request->input('subdomain');
-    //     $domain = 'efb.vn'; // Thay thế bằng domain chính của bạn
-    //     $serverIP = '163.44.206.74:21738'; // Thay thế bằng IP của server aaPanel
+   
 
-    //     $client = new Client([
-    //         'verify' => false, // Bỏ qua xác minh chứng chỉ SSL
-    //     ]);
-
-    //     try {
-    //         $response = $client->post("https://163.44.206.74:21738/v2/site?action=AddSite", [
-    //             'form_params' => [
-    //                 'subdomain' => $subdomain,
-    //                 'domain' => $domain,
-    //             ]
-    //         ]);
-
-    //         $statusCode = $response->getStatusCode();
-    //         $body = $response->getBody()->getContents();
-
-    //         return response()->json([
-    //             'status_code' => $statusCode,
-    //             'message' => 'Subdomain created successfully!',
-    //             'response' => $body,
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status_code' => $e->getCode(),
-    //             'message' => 'Failed to create subdomain.',
-    //             'error' => $e->getMessage(),
-    //         ], 500);
-    //     }
-        
-    // }
     public function deploy(Request $request)
     {
         $repo = $request->input('repo');
-        $subdomain = $request->input('subdomain'); // Nhận subdomain từ form
+        $subdomain = $request->input('subdomain'); 
         $projectPath = '/www/wwwroot/'. $subdomain;
         $domain = "$subdomain.efb.vn";
 
@@ -74,32 +41,20 @@ class DeployController extends Controller
         }
         // $b=$ssh->exec("bt domain add --domain=$subdomain.efb.vn --path=$projectPath");
         // $b=$this->addSubdomain($ssh, $domain, $projectPath);
-        return response()->json(['message' => $a]);
+        
+        $dbName = $subdomain;
+        $dbUser = $subdomain; 
+        $dbPassword = '080998';
+
+        // Copy file .env.example thành .env
+        $ssh->exec("cp $projectPath/.env.example $projectPath/.env");
+
+        // Thiết lập kết nối database trong file .env
+        $ssh->exec("sed -i 's/DB_DATABASE=.*/DB_DATABASE=$dbName/' $projectPath/.env");
+        $ssh->exec("sed -i 's/DB_USERNAME=.*/DB_USERNAME=$dbUser/' $projectPath/.env");
+        $ssh->exec("sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=$dbPassword/' $projectPath/.env");
+
+        return response()->json(['message' => $a, 'db' => $a]);
         
     }
-    // private function addSubdomain($ssh, $domain, $path)
-    // {
-    //     $apacheConfig = "
-    //         <VirtualHost *:80>
-    //             ServerAdmin webmaster@localhost
-    //             ServerName $domain
-    //             DocumentRoot $path
-
-    //             <Directory $path>
-    //                 Options Indexes FollowSymLinks
-    //                 AllowOverride All
-    //                 Require all granted
-    //             </Directory>
-
-    //             ErrorLog \${APACHE_LOG_DIR}/error.log
-    //             CustomLog \${APACHE_LOG_DIR}/access.log combined
-    //         </VirtualHost>";
-
-    //     // Tạo file cấu hình Apache cho subdomain
-    //     $ssh->exec("echo '$apacheConfig' > /etc/apache2/sites-available/$domain.conf");
-    //     $ssh->exec("a2ensite $domain.conf");
-    //     dd( $ssh->exec("echo '$apacheConfig' > /etc/apache2/sites-available/$domain.conf"));
-    //     // Reload Apache để áp dụng thay đổi
-    //     $ssh->exec("systemctl reload apache2");
-    // }
 }

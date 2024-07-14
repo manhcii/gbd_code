@@ -179,11 +179,20 @@
                       </div>
                     </div>
                   </div>
+
                   <div class="col-md-6">
                     <div class="form-group">
                       <label>@lang('Link_demo')</label>
                       <input name="json_params[link_demo]" class="form-control"
                         value="{{ $detail->json_params->link_demo ?? old('json_params[link_demo]') }}" />
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>@lang('git_repo')</label>
+                      <input name="json_params[git_repo]" class="form-control"
+                        value="{{ $detail->json_params->git_repo ?? old('json_params[git_repo]') }}" />
                     </div>
                   </div>
                   {{-- <div class="col-md-4">
