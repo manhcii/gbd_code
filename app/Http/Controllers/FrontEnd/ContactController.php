@@ -9,6 +9,7 @@ use App\Models\Contact;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use phpseclib3\Net\SSH2;
 
 class ContactController extends Controller
 {
@@ -35,6 +36,7 @@ class ContactController extends Controller
         $request->validate([
             'is_type' => 'required|max:255',
             'email' => 'required|email|max:255|unique:tb_contacts',
+            'domain' => 'required|max:255|unique:tb_contacts',
             'phone' => ['required', 'max:255', 'unique:tb_contacts', 'regex:#^(\+84|0)[3|5|7|8|9][0-9]{8}$#'],
         ], [
             'email.required' => 'Trường email là bắt buộc.',
@@ -42,13 +44,54 @@ class ContactController extends Controller
             'email.unique' => 'Trường email đã tồn tại.',
             'phone.required' => 'Trường số điện thoại là bắt buộc.',
             'phone.unique' => 'Trường số điện thoại đã tồn tại.',
+            'domain.required' => 'Trường tên miền là bắt buộc.',
+            'domain.unique' => 'Trường tên miền đã tồn tại.',
             'phone.regex' => 'Số điện thoại không hợp lệ',
         ]);
         
         
         try {
+            //Đoạn thêm vào thư mục 
+            $repo = $request->git_repo;
+            $subdomain = $request->domain; 
+            $projectPath = '/www/wwwroot/'. $subdomain;
+            $domain = "$subdomain.efb.vn";
+
+            $ssh = new SSH2(env('SSH_HOST'));
+            if (!$ssh->login(env('SSH_USER'), env('SSH_PASSWORD'))) {
+                exit('Login Failed');
+            }
+            // Tạo thư mục project nếu chưa tồn tại
+            $ssh->exec("mkdir -p $projectPath");
+            // Kiểm tra nếu thư mục đã là một repository Git
+            $result = $ssh->exec("cd $projectPath && git rev-parse --is-inside-work-tree");
+            
+            if (trim($result) !== 'true') {
+                // Nếu không phải, clone repository
+                $ssh->exec("rm -rf $projectPath"); // Xóa thư mục hiện tại nếu cần thiết
+                $a=$ssh->exec("git clone $repo $projectPath");
+            } else {
+                // Nếu đã là repository, pull thay đổi mới nhất
+                $a=$ssh->exec("cd $projectPath && git pull");
+            }
+            // $b=$ssh->exec("bt domain add --domain=$subdomain.efb.vn --path=$projectPath");
+            // $b=$this->addSubdomain($ssh, $domain, $projectPath);
+            
+            $dbName = $subdomain;
+            $dbUser = $subdomain; 
+            $dbPassword = '080998';
+
+            // Copy file .env.example thành .env
+            $ssh->exec("cp $projectPath/.env.example $projectPath/.env");
+
+            // Thiết lập kết nối database trong file .env
+            $ssh->exec("sed -i 's/DB_DATABASE=.*/DB_DATABASE=$dbName/' $projectPath/.env");
+            $ssh->exec("sed -i 's/DB_USERNAME=.*/DB_USERNAME=$dbUser/' $projectPath/.env");
+            $ssh->exec("sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=$dbPassword/' $projectPath/.env");
+
+            //thực hiện khác
             $params = $request->all();
-            $link=$params['json_params']['template']!=""?$params['json_params']['template']."admin":"";
+            $link=$domain;
             $params['status'] = Consts::CONTACT_STATUS['new'];
             $messageResult = '';
             // Case get message

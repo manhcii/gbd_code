@@ -136,35 +136,36 @@
                                     <p class="title-input"> Chọn Template:</p>
                                     <div class="input-group">
                                         <div class="input-group-prepend"> <span class="input-group-text first-input-group">
-                                                <i class="fa fa-desktop"></i> </span></div> 
+                                            <i class="fa fa-desktop"></i> </span></div> 
+                                            @php
+                                                $params['status'] = App\Consts::POST_STATUS['active'];
+                                                $params['is_type'] = App\Consts::POST_TYPE['resource'];
+                                                $rows = App\Http\Services\ContentService::getCmsPost($params)->get();
+                                            @endphp
+                                            <select required class="form-control required " name="json_params[template]" id="template">
+                                                <option value="">Chọn</option>
+                                                @foreach ($rows as $item)
                                                 @php
-                                                    $params['status'] = App\Consts::POST_STATUS['active'];
-                                                    $params['is_type'] = App\Consts::POST_TYPE['resource'];
-                                                    $rows = App\Http\Services\ContentService::getCmsPost($params)->get();
+                                                    $title = $item->json_params->title->{$locale} ?? $item->title;
+                                                    $alias_category = App\Helpers::generateRoute(App\Consts::TAXONOMY['resource'], $item->taxonomy_alias ?? $item->taxonomy_title, $item->taxonomy_id);
+                                                    $alias = App\Helpers::generateRoute(App\Consts::TAXONOMY['resource'], $item->alias ?? $title, $item->id, 'detail', $item->taxonomy_title);
+                                                    $domain = $item->json_params->git_repo??"";
                                                 @endphp
-                                                <select required class="form-control required " name="json_params[template]" id="template">
-                                                  <option value="">Chọn</option>
-                                                  @foreach ($rows as $item)
-                                                    @php
-                                                        $title = $item->json_params->title->{$locale} ?? $item->title;
-                                                        $alias_category = App\Helpers::generateRoute(App\Consts::TAXONOMY['resource'], $item->taxonomy_alias ?? $item->taxonomy_title, $item->taxonomy_id);
-                                                        $alias = App\Helpers::generateRoute(App\Consts::TAXONOMY['resource'], $item->alias ?? $title, $item->id, 'detail', $item->taxonomy_title);
-                                                        $domain = $item->json_params->link_demo??"";
-                                                    @endphp
-                                                    <option value="{{ $domain }}">{{ $title }}</option>
-                                                  @endforeach
-                                                </select>
+                                                <option value="{{ $domain }}">{{ $title }}</option>
+                                                @endforeach
+                                            </select>
                                     </div>
                                 </div>
                             </div>
+                            <input type="hidden" name="git_repo" class="git_repo" value="">
                             <div class="col-12 col-md-12">
                                 <div class="form-group">
                                     <p class="title-input"> Tên miền dùng thử:</p>
                                     <div class="input-group">
-                                        <div class="input-group-prepend"> <span class="input-group-text first-input-group">
-                                                <i class="fa fa-globe"></i> </span></div> <input readonly
-                                            class="form-control required domain" type="text"  
-                                            placeholder="Tên miền dùng thử" aria-required="true">
+                                        <input class="form-control required " required type="text" name="domain" placeholder="Tên miền dùng thử" aria-required="true"> 
+                                        <div class="input-group-prepend"> 
+                                            <span class="input-group-text first-input-group">.efb.vn</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -191,7 +192,7 @@
 @push("script")
 <script>
     $('#template').click(function () {
-        $('.domain').val($(this).val())
+        $('.git_repo').val($(this).val())
     });
 </script>
 @endpush

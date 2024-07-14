@@ -40,7 +40,7 @@
 <body>
   <div id="loading">
     <img id="loading-image" src="https://www.lannietravel.com/themes/frontend/assets/images/ajax-loader.gif" alt="Loading...">
-  <p style="color: #07599F;font-weight: 600;">Loading...</p>
+  <p style="color: #07599F;font-weight: 600;">Chúng tôi đang thiết lập website cho bạn.Vui lòng chờ đợi...</p>
   </div>
   <div id="alert-config">
     
