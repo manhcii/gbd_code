@@ -160,9 +160,9 @@
                             <input type="hidden" name="git_repo" class="git_repo" value="">
                             <div class="col-12 col-md-12">
                                 <div class="form-group">
-                                    <p class="title-input"> Tên miền dùng thử:</p>
+                                    <p class="title-input"> Tên miền website:</p>
                                     <div class="input-group">
-                                        <input class="form-control required " required type="text" name="domain" placeholder="Tên miền dùng thử" aria-required="true"> 
+                                        <input class="form-control required " required type="text" name="domain" placeholder="Tên miền website" aria-required="true"> 
                                         <div class="input-group-prepend"> 
                                             <span class="input-group-text first-input-group">.efb.vn</span>
                                         </div>
@@ -170,8 +170,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" class="trial-registration"> Đăng ký dùng
-                            thử </button>
+                        <button type="submit" class="trial-registration"> Đăng ký Website </button>
                     </form>
                 </div>
             </div>
@@ -179,7 +178,7 @@
                 <div class="add-theme">
                     <div class="ratio-registertrial">
                         <div class="text-registertrial">
-                            <p> DÙNG THỬ WEBSITE <br> MIỄN PHÍ</p> <span> +100.000 doanh nghiệp &amp; chủ shop đã
+                            <p> TẠO WEBSITE <br> MIỄN PHÍ</p> <span> +100.000 doanh nghiệp &amp; chủ shop đã
                                 tin
                                 dùng </span>
                         </div>

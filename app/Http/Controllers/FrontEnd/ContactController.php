@@ -39,13 +39,13 @@ class ContactController extends Controller
             'domain' => 'required|max:255|unique:tb_contacts',
             'phone' => ['required', 'max:255', 'unique:tb_contacts', 'regex:#^(\+84|0)[3|5|7|8|9][0-9]{8}$#'],
         ], [
-            'email.required' => 'Trường email là bắt buộc.',
-            'email.email' => 'Trường email phải là một địa chỉ email hợp lệ.',
-            'email.unique' => 'Trường email đã tồn tại.',
-            'phone.required' => 'Trường số điện thoại là bắt buộc.',
-            'phone.unique' => 'Trường số điện thoại đã tồn tại.',
-            'domain.required' => 'Trường tên miền là bắt buộc.',
-            'domain.unique' => 'Trường tên miền đã tồn tại.',
+            'email.required' => 'Email là bắt buộc.',
+            'email.email' => 'Email phải là một địa chỉ email hợp lệ.',
+            'email.unique' => 'Email đã tồn tại.',
+            'phone.required' => 'Số điện thoại là bắt buộc.',
+            'phone.unique' => 'Số điện thoại đã tồn tại.',
+            'domain.required' => 'Tên miền là bắt buộc.',
+            'domain.unique' => 'Tên miền đã tồn tại.',
             'phone.regex' => 'Số điện thoại không hợp lệ',
         ]);
         
@@ -54,7 +54,8 @@ class ContactController extends Controller
             //Đoạn thêm vào thư mục 
             $repo = $request->git_repo;
             $subdomain = $request->domain; 
-            $projectPath = '/www/wwwroot/'. $subdomain;
+            $projectPath = '/www/wwwroot/efb.vn/public/subdomain/'. $subdomain;
+            // $projectPath = '/www/wwwroot/'. $subdomain;
             $domain = "$subdomain.efb.vn";
 
             $ssh = new SSH2(env('SSH_HOST'));
@@ -70,9 +71,11 @@ class ContactController extends Controller
                 // Nếu không phải, clone repository
                 $ssh->exec("rm -rf $projectPath"); // Xóa thư mục hiện tại nếu cần thiết
                 $a=$ssh->exec("git clone $repo $projectPath");
+                $b = $ssh->exec("cd $projectPath && composer update");
             } else {
                 // Nếu đã là repository, pull thay đổi mới nhất
                 $a=$ssh->exec("cd $projectPath && git pull");
+                $b = $ssh->exec("cd $projectPath && composer update");
             }
             // $b=$ssh->exec("bt domain add --domain=$subdomain.efb.vn --path=$projectPath");
             // $b=$this->addSubdomain($ssh, $domain, $projectPath);

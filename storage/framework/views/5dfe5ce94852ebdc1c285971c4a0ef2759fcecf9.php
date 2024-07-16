@@ -321,8 +321,7 @@
                     form[0].reset();
                     if(response.data!=""){
                         if (confirm(response.message+'Bạn có muốn đi tới trang quản trị themes đã chọn?')) {
-                            alert("http://"+response.data);
-                            window.location.href="http://"+response.data;
+                            window.location.href="http://"+response.data+"/admin";
                         }
                     } 
                     else location.reload();
