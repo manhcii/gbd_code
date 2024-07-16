@@ -65,10 +65,11 @@ class CmsController extends Controller
             $params['alias'] = $alias;
             $params['status'] = Consts::POST_STATUS['active'];
             $detail = ContentService::getCmsPost($params)->first();
-       
-            $review = Review::where('status', "!=",'delete')->where('id_product',$detail->id)->orderBy("created_at","desc")->get();
+            
           
             if ($detail) {
+                $review = Review::where('status', "!=",'delete')->where('id_product',$detail->id)->orderBy("created_at","desc")->get();
+
                 $detail->count_visited = $detail->count_visited + 1;
                 $detail->save();
                 $this->responseData['detail'] = $detail;
